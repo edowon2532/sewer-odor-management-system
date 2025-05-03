@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+# 하수도 악취관리 통합시스템
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+성남시의 하수도 악취를 효율적으로 관리하기 위한 웹 기반 통합 시스템입니다. 악취 발생 현황을 모니터링하고, 악취저감시설을 관리하며, 민원을 처리할 수 있는 기능을 제공합니다.
 
-## Available Scripts
+## 주요 기능
 
-In the project directory, you can run:
+- **대시보드**: 악취 관련 주요 지표와 현황을 한눈에 파악
+- **악취지도**: 악취 등급, 시설, 민원, 체감도를 지도 상에 표시
+- **시설관리**: 악취저감시설 관리 및 점검
+- **실시간 모니터링**: 악취 측정값 실시간 확인 및 알림
+- **민원관리**: 악취 관련 민원 접수 및 처리
+- **통계분석**: 악취 데이터 분석 및 시각화
+- **설정**: 사용자 관리 및 시스템 설정
 
-### `npm start`
+## 기술 스택
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- React.js
+- Tailwind CSS
+- GitHub Pages (배포)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 설치 및 실행 방법
 
-### `npm test`
+1. 저장소 클론
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+git clone https://github.com/your-username/sewer-odor-management-system.git
+cd sewer-odor-management-system
+```
 
-### `npm run build`
+2. 의존성 패키지 설치
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. 개발 서버 실행
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm start
+```
 
-### `npm run eject`
+4. 빌드
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm run build
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+5. GitHub Pages 배포
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npm run deploy
+```
