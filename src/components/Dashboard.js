@@ -1,4 +1,27 @@
 import React from 'react';
+import { Line, Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 // 지표 카드 컴포넌트
 const MetricCard = ({ title, value, change, period, isPositive = false }) => {
@@ -20,6 +43,45 @@ const MetricCard = ({ title, value, change, period, isPositive = false }) => {
 
 // 대시보드 컴포넌트
 const Dashboard = () => {
+  // 실시간 악취 모니터링 데이터
+  const monitoringData = {
+    labels: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],
+    datasets: [
+      {
+        label: '악취 수준',
+        data: [2.1, 2.3, 2.0, 2.4, 2.6, 2.5, 2.3, 2.2],
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      }
+    ]
+  };
+
+  // 악취 등급별 분포 데이터
+  const gradeData = {
+    labels: ['1등급', '2등급', '3등급', '4등급', '5등급'],
+    datasets: [
+      {
+        data: [30, 25, 20, 15, 10],
+        backgroundColor: [
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(255, 159, 64, 0.6)',
+          'rgba(255, 99, 132, 0.6)',
+        ],
+        borderColor: [
+          'rgba(75, 192, 192, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 99, 132, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">악취관리 현황</h2>
@@ -32,15 +94,47 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-4 rounded shadow">
           <h3 className="text-lg font-bold mb-2">실시간 악취 모니터링 현황</h3>
-          <div className="h-64 bg-gray-100 flex items-center justify-center">
-            <p className="text-gray-500">실시간 악취 측정 그래프</p>
+          <div className="h-64">
+            <Line data={monitoringData} options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'top',
+                },
+                title: {
+                  display: false,
+                },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 5,
+                  title: {
+                    display: true,
+                    text: '악취 등급'
+                  }
+                }
+              }
+            }} />
           </div>
         </div>
         
         <div className="bg-white p-4 rounded shadow">
           <h3 className="text-lg font-bold mb-2">악취 등급별 분포</h3>
-          <div className="h-64 bg-gray-100 flex items-center justify-center">
-            <p className="text-gray-500">등급별 분포도</p>
+          <div className="h-64">
+            <Doughnut data={gradeData} options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'right',
+                },
+                title: {
+                  display: false,
+                },
+              },
+            }} />
           </div>
         </div>
         
@@ -57,19 +151,19 @@ const Dashboard = () => {
             </thead>
             <tbody>
               <tr className="border-b">
-                <td className="p-2">수정구 태평동</td>
+                <td className="p-2">광주 남구 봉선동</td>
                 <td className="p-2">빗물받이 악취</td>
                 <td className="p-2">2025-04-28</td>
                 <td className="p-2"><span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">처리중</span></td>
               </tr>
               <tr className="border-b">
-                <td className="p-2">중원구 금광동</td>
+                <td className="p-2">광주 남구 주월동</td>
                 <td className="p-2">맨홀 악취</td>
                 <td className="p-2">2025-04-26</td>
                 <td className="p-2"><span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">완료</span></td>
               </tr>
               <tr>
-                <td className="p-2">수정구 신촌동</td>
+                <td className="p-2">광주 남구 방림동</td>
                 <td className="p-2">하수관 악취</td>
                 <td className="p-2">2025-04-25</td>
                 <td className="p-2"><span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">완료</span></td>
