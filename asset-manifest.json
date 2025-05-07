@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/sewer-odor-management-system/static/css/main.b412262b.css",
-    "main.js": "/sewer-odor-management-system/static/js/main.42d6878f.js",
+    "main.js": "/sewer-odor-management-system/static/js/main.6c434b7d.js",
     "static/js/453.9eb9e1c1.chunk.js": "/sewer-odor-management-system/static/js/453.9eb9e1c1.chunk.js",
     "index.html": "/sewer-odor-management-system/index.html",
     "main.b412262b.css.map": "/sewer-odor-management-system/static/css/main.b412262b.css.map",
-    "main.42d6878f.js.map": "/sewer-odor-management-system/static/js/main.42d6878f.js.map",
+    "main.6c434b7d.js.map": "/sewer-odor-management-system/static/js/main.6c434b7d.js.map",
     "453.9eb9e1c1.chunk.js.map": "/sewer-odor-management-system/static/js/453.9eb9e1c1.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.b412262b.css",
-    "static/js/main.42d6878f.js"
+    "static/js/main.6c434b7d.js"
   ]
 }
