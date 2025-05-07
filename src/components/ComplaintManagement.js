@@ -80,13 +80,13 @@ const ComplaintManagement = () => {
             >
               완료
             </button>
-          </div>
+        </div>
           <button className="bg-teal-600 text-white px-4 py-2 rounded">
             민원 등록
           </button>
         </div>
       </div>
-
+      
       <div className="bg-white rounded shadow overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-100">
@@ -114,14 +114,14 @@ const ComplaintManagement = () => {
                   }`}>
                     {complaint.status}
                   </span>
-                </td>
+              </td>
                 <td className="p-3">{complaint.description}</td>
                 <td className="p-3">{complaint.contact}</td>
                 <td className="p-3">
                   <button className="text-teal-600 hover:text-teal-800 mr-2">상세</button>
                   <button className="text-red-600 hover:text-red-800">삭제</button>
-                </td>
-              </tr>
+              </td>
+            </tr>
             ))}
           </tbody>
         </table>

@@ -2,6 +2,166 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Map, MapMarker, Roadview, Circle } from 'react-kakao-maps-sdk';
 import { Line, Bar } from 'react-chartjs-2';
 
+// 악취 발생 지점 데이터
+const odorLocations = [
+  {
+    id: 1,
+    type: '거점형',
+    markerLabel: 'P2',
+    name: '봉선동 악취 측정지점',
+    position: { lat: 35.1300, lng: 126.9108 },
+    grade: '경계',
+    value: 2.35,
+    nh3: 0.512,
+    h2s: 2.148,
+    co2: 0.256,
+    timeSeries: [1.2, 1.5, 2.0, 2.35, 2.1, 1.8],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  },
+  {
+    id: 2,
+    type: '거점형',
+    markerLabel: 'P0',
+    name: '방림동 악취 측정지점',
+    position: { lat: 35.1334, lng: 126.9212 },
+    grade: '좋음',
+    value: 0.98,
+    nh3: 0.125,
+    h2s: 1.018,
+    co2: 0.123,
+    timeSeries: [0.8, 0.9, 1.0, 0.98, 0.95, 0.9],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  },
+  {
+    id: 3,
+    type: '지역형',
+    markerLabel: 'A',
+    name: '주월동 악취 측정지점',
+    position: { lat: 35.1134, lng: 126.9012 },
+    grade: '나쁨',
+    value: 3.12,
+    nh3: 1.055,
+    h2s: 2.365,
+    co2: 0.512,
+    timeSeries: [2.5, 2.8, 3.0, 3.12, 3.0, 2.9],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  },
+  {
+    id: 4,
+    type: '거점형',
+    markerLabel: 'P2',
+    name: '진월동 악취 측정지점',
+    position: { lat: 35.1200, lng: 126.9150 },
+    grade: '보통',
+    value: 1.45,
+    nh3: 0.312,
+    h2s: 1.245,
+    co2: 0.200,
+    timeSeries: [1.1, 1.2, 1.3, 1.45, 1.4, 1.3],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  },
+  {
+    id: 5,
+    type: '거점형',
+    markerLabel: 'P0',
+    name: '송암동 악취 측정지점',
+    position: { lat: 35.1100, lng: 126.9200 },
+    grade: '매우좋음',
+    value: 0.55,
+    nh3: 0.050,
+    h2s: 0.500,
+    co2: 0.100,
+    timeSeries: [0.4, 0.5, 0.6, 0.55, 0.5, 0.45],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  },
+  {
+    id: 6,
+    type: '거점형',
+    markerLabel: 'P2',
+    name: '월산동 악취 측정지점',
+    position: { lat: 35.1250, lng: 126.9050 },
+    grade: '경계',
+    value: 2.10,
+    nh3: 0.400,
+    h2s: 2.000,
+    co2: 0.300,
+    timeSeries: [1.8, 1.9, 2.0, 2.1, 2.0, 1.9],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  },
+  {
+    id: 7,
+    type: '거점형',
+    markerLabel: 'P0',
+    name: '백운동 악취 측정지점',
+    position: { lat: 35.1280, lng: 126.9180 },
+    grade: '좋음',
+    value: 1.00,
+    nh3: 0.200,
+    h2s: 1.000,
+    co2: 0.150,
+    timeSeries: [0.9, 1.0, 1.1, 1.0, 0.95, 0.9],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  },
+  {
+    id: 8,
+    type: '지역형',
+    markerLabel: 'A',
+    name: '양림동 악취 측정지점',
+    position: { lat: 35.1350, lng: 126.9150 },
+    grade: '보통',
+    value: 1.60,
+    nh3: 0.350,
+    h2s: 1.400,
+    co2: 0.180,
+    timeSeries: [1.3, 1.4, 1.5, 1.6, 1.5, 1.4],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  },
+  {
+    id: 9,
+    type: '지역형',
+    markerLabel: 'A',
+    name: '사직동 악취 측정지점',
+    position: { lat: 35.1400, lng: 126.9000 },
+    grade: '나쁨',
+    value: 3.00,
+    nh3: 1.000,
+    h2s: 2.800,
+    co2: 0.600,
+    timeSeries: [2.7, 2.8, 2.9, 3.0, 2.9, 2.8],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  },
+  {
+    id: 10,
+    type: '거점형',
+    markerLabel: 'P2',
+    name: '대촌동 악취 측정지점',
+    position: { lat: 35.1150, lng: 126.9300 },
+    grade: '경계',
+    value: 2.50,
+    nh3: 0.600,
+    h2s: 2.300,
+    co2: 0.350,
+    timeSeries: [2.2, 2.3, 2.4, 2.5, 2.4, 2.3],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  },
+  {
+    id: 11,
+    type: '거점형',
+    markerLabel: 'P0',
+    name: '송하동 악취 측정지점',
+    position: { lat: 35.1180, lng: 126.9120 },
+    grade: '매우좋음',
+    value: 0.70,
+    nh3: 0.080,
+    h2s: 0.600,
+    co2: 0.120,
+    timeSeries: [0.6, 0.7, 0.8, 0.7, 0.65, 0.6],
+    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  }
+];
+const itemsPerPage = 3;
+const totalPages = Math.ceil(odorLocations.length / itemsPerPage);
+
 const OdorMap = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -15,8 +175,6 @@ const OdorMap = () => {
   const mapRef = useRef(null);
   const roadviewRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-  const totalPages = 4;
   const [showPipeModal, setShowPipeModal] = useState(false);
   const [showOdor, setShowOdor] = useState(true);
   const [showPipe, setShowPipe] = useState(false);
@@ -48,164 +206,6 @@ const OdorMap = () => {
     lat: 35.1264,
     lng: 126.9117
   };
-
-  // 악취 발생 지점 데이터
-  const odorLocations = [
-    {
-      id: 1,
-      type: '거점형',
-      markerLabel: 'P2',
-      name: '봉선동 악취 측정지점',
-      position: { lat: 35.1300, lng: 126.9108 },
-      grade: '경계',
-      value: 2.35,
-      nh3: 0.512,
-      h2s: 2.148,
-      co2: 0.256,
-      timeSeries: [1.2, 1.5, 2.0, 2.35, 2.1, 1.8],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    },
-    {
-      id: 2,
-      type: '거점형',
-      markerLabel: 'P0',
-      name: '방림동 악취 측정지점',
-      position: { lat: 35.1334, lng: 126.9212 },
-      grade: '좋음',
-      value: 0.98,
-      nh3: 0.125,
-      h2s: 1.018,
-      co2: 0.123,
-      timeSeries: [0.8, 0.9, 1.0, 0.98, 0.95, 0.9],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    },
-    {
-      id: 3,
-      type: '지역형',
-      markerLabel: 'A',
-      name: '주월동 악취 측정지점',
-      position: { lat: 35.1134, lng: 126.9012 },
-      grade: '나쁨',
-      value: 3.12,
-      nh3: 1.055,
-      h2s: 2.365,
-      co2: 0.512,
-      timeSeries: [2.5, 2.8, 3.0, 3.12, 3.0, 2.9],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    },
-    {
-      id: 4,
-      type: '거점형',
-      markerLabel: 'P2',
-      name: '진월동 악취 측정지점',
-      position: { lat: 35.1200, lng: 126.9150 },
-      grade: '보통',
-      value: 1.45,
-      nh3: 0.312,
-      h2s: 1.245,
-      co2: 0.200,
-      timeSeries: [1.1, 1.2, 1.3, 1.45, 1.4, 1.3],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    },
-    {
-      id: 5,
-      type: '거점형',
-      markerLabel: 'P0',
-      name: '송암동 악취 측정지점',
-      position: { lat: 35.1100, lng: 126.9200 },
-      grade: '매우좋음',
-      value: 0.55,
-      nh3: 0.050,
-      h2s: 0.500,
-      co2: 0.100,
-      timeSeries: [0.4, 0.5, 0.6, 0.55, 0.5, 0.45],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    },
-    {
-      id: 6,
-      type: '거점형',
-      markerLabel: 'P2',
-      name: '월산동 악취 측정지점',
-      position: { lat: 35.1250, lng: 126.9050 },
-      grade: '경계',
-      value: 2.10,
-      nh3: 0.400,
-      h2s: 2.000,
-      co2: 0.300,
-      timeSeries: [1.8, 1.9, 2.0, 2.1, 2.0, 1.9],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    },
-    {
-      id: 7,
-      type: '거점형',
-      markerLabel: 'P0',
-      name: '백운동 악취 측정지점',
-      position: { lat: 35.1280, lng: 126.9180 },
-      grade: '좋음',
-      value: 1.00,
-      nh3: 0.200,
-      h2s: 1.000,
-      co2: 0.150,
-      timeSeries: [0.9, 1.0, 1.1, 1.0, 0.95, 0.9],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    },
-    {
-      id: 8,
-      type: '지역형',
-      markerLabel: 'A',
-      name: '양림동 악취 측정지점',
-      position: { lat: 35.1350, lng: 126.9150 },
-      grade: '보통',
-      value: 1.60,
-      nh3: 0.350,
-      h2s: 1.400,
-      co2: 0.180,
-      timeSeries: [1.3, 1.4, 1.5, 1.6, 1.5, 1.4],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    },
-    {
-      id: 9,
-      type: '지역형',
-      markerLabel: 'A',
-      name: '사직동 악취 측정지점',
-      position: { lat: 35.1400, lng: 126.9000 },
-      grade: '나쁨',
-      value: 3.00,
-      nh3: 1.000,
-      h2s: 2.800,
-      co2: 0.600,
-      timeSeries: [2.7, 2.8, 2.9, 3.0, 2.9, 2.8],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    },
-    {
-      id: 10,
-      type: '거점형',
-      markerLabel: 'P2',
-      name: '대촌동 악취 측정지점',
-      position: { lat: 35.1150, lng: 126.9300 },
-      grade: '경계',
-      value: 2.50,
-      nh3: 0.600,
-      h2s: 2.300,
-      co2: 0.350,
-      timeSeries: [2.2, 2.3, 2.4, 2.5, 2.4, 2.3],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    },
-    {
-      id: 11,
-      type: '거점형',
-      markerLabel: 'P0',
-      name: '송하동 악취 측정지점',
-      position: { lat: 35.1180, lng: 126.9120 },
-      grade: '매우좋음',
-      value: 0.70,
-      nh3: 0.080,
-      h2s: 0.600,
-      co2: 0.120,
-      timeSeries: [0.6, 0.7, 0.8, 0.7, 0.65, 0.6],
-      labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-    }
-  ];
 
   // 하수관로 시설 데이터 추가
   const pipeLocations = [

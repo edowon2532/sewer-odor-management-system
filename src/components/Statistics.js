@@ -92,7 +92,7 @@ const Statistics = () => {
             }} />
           </div>
         </div>
-
+        
         <div className="bg-white p-4 rounded shadow">
           <h3 className="text-lg font-bold mb-2">지역별 악취 발생 비율</h3>
           <div className="h-80">
@@ -110,7 +110,7 @@ const Statistics = () => {
             }} />
           </div>
         </div>
-
+        
         <div className="bg-white p-4 rounded shadow">
           <h3 className="text-lg font-bold mb-2">악취 발생 유형별 통계</h3>
           <table className="w-full">
@@ -145,7 +145,7 @@ const Statistics = () => {
             </tbody>
           </table>
         </div>
-
+        
         <div className="bg-white p-4 rounded shadow">
           <h3 className="text-lg font-bold mb-2">악취 등급별 분포</h3>
           <table className="w-full">

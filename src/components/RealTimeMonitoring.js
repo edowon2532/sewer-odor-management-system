@@ -56,10 +56,11 @@ const RealTimeMonitoring = () => {
     { id: 5, type: '거점형', markerLabel: 'P2', name: '백운동 저감시설-005', status: '정지', startTime: '', stopTime: '', reason: '' }
   ]);
 
-  // 페이징 상태 (4페이지로 고정)
+  // 악취저감시설 실시간 가동제어 페이징 처리
+  const itemsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 4;
-  const pagedFacilities = odorFacilities;
+  const totalPages = Math.ceil(odorFacilities.length / itemsPerPage);
+  const pagedFacilities = odorFacilities.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   // 모니터링 지역 현황 데이터 (광주 남구 읍면동 전체)
   const monitoringRegions = [
@@ -126,7 +127,7 @@ const RealTimeMonitoring = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <h2 className="text-xl font-bold mb-4">실시간 악취 모니터링</h2>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -210,7 +211,7 @@ const RealTimeMonitoring = () => {
       </div>
 
       {/* 악취저감시설 실시간 가동제어 섹션 */}
-      <div className="bg-white rounded shadow p-4 mt-8">
+      <div className="bg-white rounded shadow p-4 mt-8 overflow-x-auto max-h-[calc(100vh-24rem)]">
         <h3 className="text-lg font-bold mb-2">악취저감시설 실시간 가동제어</h3>
         <table className="w-full text-sm">
           <thead>
