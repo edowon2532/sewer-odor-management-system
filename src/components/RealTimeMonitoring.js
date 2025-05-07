@@ -49,11 +49,11 @@ const RealTimeMonitoring = () => {
 
   // 악취저감시설 실시간 가동제어 상태
   const [odorFacilities, setOdorFacilities] = useState([
-    { id: 1, type: '거점형', markerLabel: 'P0', name: '봉선동 저감시설-001', status: '정지', startTime: '', stopTime: '', reason: '' },
-    { id: 2, type: '거점형', markerLabel: 'P2', name: '방림동 저감시설-002', status: '가동중', startTime: '2024-06-10 09:00', stopTime: '', reason: '수동' },
+    { id: 1, type: '지점형', markerLabel: 'P0', name: '봉선동 저감시설-001', status: '정지', startTime: '', stopTime: '', reason: '' },
+    { id: 2, type: '지점형', markerLabel: 'P2', name: '방림동 저감시설-002', status: '가동중', startTime: '2024-06-10 09:00', stopTime: '', reason: '수동' },
     { id: 3, type: '구역형', markerLabel: 'A', name: '주월동 저감시설-003', status: '정지', startTime: '', stopTime: '', reason: '' },
-    { id: 4, type: '거점형', markerLabel: 'P0', name: '양림동 저감시설-004', status: '가동중', startTime: '2024-06-10 08:30', stopTime: '', reason: '자동(수치상승)' },
-    { id: 5, type: '거점형', markerLabel: 'P2', name: '백운동 저감시설-005', status: '정지', startTime: '', stopTime: '', reason: '' }
+    { id: 4, type: '지점형', markerLabel: 'P0', name: '양림동 저감시설-004', status: '가동중', startTime: '2024-06-10 08:30', stopTime: '', reason: '자동(수치상승)' },
+    { id: 5, type: '지점형', markerLabel: 'P2', name: '백운동 저감시설-005', status: '정지', startTime: '', stopTime: '', reason: '' }
   ]);
 
   // 악취저감시설 실시간 가동제어 페이징 처리
@@ -230,7 +230,7 @@ const RealTimeMonitoring = () => {
             {pagedFacilities.map(fac => (
               <tr key={fac.id} className="border-b">
                 <td className="p-2">
-                  <span className={`inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 ${fac.type === '거점형' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                  <span className={`inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 ${fac.type === '지점형' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>
                     {fac.markerLabel}
                   </span>
                   {fac.type}

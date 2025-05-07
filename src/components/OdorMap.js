@@ -6,7 +6,7 @@ import { Line, Bar } from 'react-chartjs-2';
 const odorLocations = [
   {
     id: 1,
-    type: '거점형',
+    type: '지점형',
     markerLabel: 'P2',
     name: '봉선동 악취 측정지점',
     position: { lat: 35.1300, lng: 126.9108 },
@@ -20,7 +20,7 @@ const odorLocations = [
   },
   {
     id: 2,
-    type: '거점형',
+    type: '지점형',
     markerLabel: 'P0',
     name: '방림동 악취 측정지점',
     position: { lat: 35.1334, lng: 126.9212 },
@@ -34,7 +34,7 @@ const odorLocations = [
   },
   {
     id: 3,
-    type: '지역형',
+    type: '구역형',
     markerLabel: 'A',
     name: '주월동 악취 측정지점',
     position: { lat: 35.1134, lng: 126.9012 },
@@ -48,7 +48,7 @@ const odorLocations = [
   },
   {
     id: 4,
-    type: '거점형',
+    type: '지점형',
     markerLabel: 'P2',
     name: '진월동 악취 측정지점',
     position: { lat: 35.1200, lng: 126.9150 },
@@ -62,7 +62,7 @@ const odorLocations = [
   },
   {
     id: 5,
-    type: '거점형',
+    type: '지점형',
     markerLabel: 'P0',
     name: '송암동 악취 측정지점',
     position: { lat: 35.1100, lng: 126.9200 },
@@ -76,7 +76,7 @@ const odorLocations = [
   },
   {
     id: 6,
-    type: '거점형',
+    type: '지점형',
     markerLabel: 'P2',
     name: '월산동 악취 측정지점',
     position: { lat: 35.1250, lng: 126.9050 },
@@ -90,7 +90,7 @@ const odorLocations = [
   },
   {
     id: 7,
-    type: '거점형',
+    type: '지점형',
     markerLabel: 'P0',
     name: '백운동 악취 측정지점',
     position: { lat: 35.1280, lng: 126.9180 },
@@ -104,7 +104,7 @@ const odorLocations = [
   },
   {
     id: 8,
-    type: '지역형',
+    type: '구역형',
     markerLabel: 'A',
     name: '양림동 악취 측정지점',
     position: { lat: 35.1350, lng: 126.9150 },
@@ -118,7 +118,7 @@ const odorLocations = [
   },
   {
     id: 9,
-    type: '지역형',
+    type: '구역형',
     markerLabel: 'A',
     name: '사직동 악취 측정지점',
     position: { lat: 35.1400, lng: 126.9000 },
@@ -132,7 +132,7 @@ const odorLocations = [
   },
   {
     id: 10,
-    type: '거점형',
+    type: '지점형',
     markerLabel: 'P2',
     name: '대촌동 악취 측정지점',
     position: { lat: 35.1150, lng: 126.9300 },
@@ -146,7 +146,7 @@ const odorLocations = [
   },
   {
     id: 11,
-    type: '거점형',
+    type: '지점형',
     markerLabel: 'P0',
     name: '송하동 악취 측정지점',
     position: { lat: 35.1180, lng: 126.9120 },
@@ -553,7 +553,7 @@ const OdorMap = () => {
           {selectedLocation && (
             <div className="absolute right-4 bottom-4 w-96 bg-white rounded shadow p-4 z-50" style={{right: '1rem'}}>
               <div className="mb-2">
-                <span className={`inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 ${selectedLocation.type === '거점형' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>{selectedLocation.type}</span>
+                <span className={`inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 ${selectedLocation.type === '지점형' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>{selectedLocation.type}</span>
                 <span className="font-bold">{selectedLocation.name}</span>
               </div>
               <div className="mb-2">등급: <span style={{ color: getLabelColor(selectedLocation.grade) }}>{selectedLocation.grade}</span></div>
@@ -791,7 +791,7 @@ const OdorMap = () => {
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className={`inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 ${location.type === '거점형' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>{location.type}</span>
+                        <span className={`inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 ${location.type === '지점형' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>{location.type}</span>
                         <h4 className="font-medium inline">{location.name}</h4>
                         <p className="text-sm text-gray-600 mt-1">악취 강도: {location.grade}</p>
                       </div>

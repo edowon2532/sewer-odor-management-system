@@ -6,8 +6,8 @@ const FacilityManagement = () => {
   const facilities = [
     {
       id: 1,
-      name: '구동 지역형 악취저감시설',
-      type: '지역형 악취저감시설',
+      name: '구동 구역형 악취저감시설',
+      type: '구역형 악취저감시설',
       location: '광주 남구 구동',
       status: '정상',
       lastMaintenance: '2025-04-15',
@@ -128,9 +128,9 @@ const FacilityManagement = () => {
                 <td className="p-3">{facility.name}</td>
                 <td className="p-3">
                   {['정화조 악취저감시설','맨홀 악취차단장치','맨홀 단차부 낙차완화시설'].includes(facility.type) ? (
-                    <span className="inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 bg-blue-100 text-blue-700">거점형</span>
+                    <span className="inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 bg-blue-100 text-blue-700">지점형</span>
                   ) : (
-                    <span className="inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 bg-yellow-100 text-yellow-700">지역형</span>
+                    <span className="inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 bg-yellow-100 text-yellow-700">구역형</span>
                   )}
                   {facility.type}
                 </td>
