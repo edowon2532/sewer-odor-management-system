@@ -158,27 +158,27 @@ const Statistics = () => {
             </thead>
             <tbody>
               <tr className="border-b">
-                <td className="p-2">1등급 (무취)</td>
+                <td className="p-2">매우좋음</td>
                 <td className="p-2">15</td>
                 <td className="p-2">12%</td>
               </tr>
               <tr className="border-b">
-                <td className="p-2">2등급 (약한 악취)</td>
+                <td className="p-2">좋음</td>
                 <td className="p-2">45</td>
                 <td className="p-2">36%</td>
               </tr>
               <tr className="border-b">
-                <td className="p-2">3등급 (중간 악취)</td>
+                <td className="p-2">보통</td>
                 <td className="p-2">38</td>
                 <td className="p-2">30%</td>
               </tr>
               <tr className="border-b">
-                <td className="p-2">4등급 (강한 악취)</td>
+                <td className="p-2">나쁨</td>
                 <td className="p-2">20</td>
                 <td className="p-2">16%</td>
               </tr>
               <tr>
-                <td className="p-2">5등급 (매우 강한 악취)</td>
+                <td className="p-2">매우나쁨</td>
                 <td className="p-2">7</td>
                 <td className="p-2">6%</td>
               </tr>

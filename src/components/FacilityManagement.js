@@ -102,13 +102,13 @@ const FacilityManagement = () => {
             >
               빗물받이 악취차단장치
             </button>
-          </div>
+        </div>
           <button className="bg-teal-600 text-white px-4 py-2 rounded">
             시설 등록
           </button>
         </div>
       </div>
-
+      
       <div className="bg-white rounded shadow overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-100">
@@ -133,7 +133,7 @@ const FacilityManagement = () => {
                     <span className="inline-block rounded px-2 py-0.5 text-xs font-bold mr-2 bg-yellow-100 text-yellow-700">구역형</span>
                   )}
                   {facility.type}
-                </td>
+              </td>
                 <td className="p-3">{facility.location}</td>
                 <td className="p-3">
                   <span className={`px-2 py-1 rounded text-sm ${
@@ -145,14 +145,14 @@ const FacilityManagement = () => {
                   }`}>
                     {facility.status}
                   </span>
-                </td>
+              </td>
                 <td className="p-3">{facility.lastMaintenance}</td>
                 <td className="p-3">{facility.nextMaintenance}</td>
                 <td className="p-3">
                   <button className="text-teal-600 hover:text-teal-800 mr-2">상세</button>
                   <button className="text-red-600 hover:text-red-800">삭제</button>
-                </td>
-              </tr>
+              </td>
+            </tr>
             ))}
           </tbody>
         </table>

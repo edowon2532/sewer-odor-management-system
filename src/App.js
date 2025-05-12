@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { MdDashboard, MdMap, MdWarning, MdBuild, MdAssessment, MdSettings, MdNotifications } from 'react-icons/md';
 import Dashboard from './components/Dashboard';
 import OdorMap from './components/OdorMap';
@@ -9,18 +9,33 @@ import FacilityManagement from './components/FacilityManagement';
 import Statistics from './components/Statistics';
 import Settings from './components/Settings';
 
+const menuItems = [
+  { path: '/', icon: <MdDashboard />, label: '대시보드', component: Dashboard },
+  { path: '/odor-map', icon: <MdMap />, label: '악취지도', component: OdorMap },
+  { path: '/monitoring', icon: <MdNotifications />, label: '실시간 모니터링', component: RealTimeMonitoring },
+  { path: '/complaints', icon: <MdWarning />, label: '민원관리', component: ComplaintManagement },
+  { path: '/facilities', icon: <MdBuild />, label: '시설관리', component: FacilityManagement },
+  { path: '/statistics', icon: <MdAssessment />, label: '통계분석', component: Statistics },
+  { path: '/settings', icon: <MdSettings />, label: '설정', component: Settings }
+];
+
+function MainContent() {
+  const location = useLocation();
+  // 대시보드, 악취지도는 패딩 없음, 나머지는 p-6
+  const noPadding = location.pathname === '/' || location.pathname === '/odor-map';
+  return (
+    <main className={`flex-1 overflow-hidden${noPadding ? '' : ' p-6'}`}>
+      <Routes>
+        {menuItems.map((item) => (
+          <Route key={item.path} path={item.path} element={<item.component />} />
+        ))}
+      </Routes>
+    </main>
+  );
+}
+
 const App = () => {
   const [isMenuExpanded, setIsMenuExpanded] = useState(true);
-
-  const menuItems = [
-    { path: '/', icon: <MdDashboard />, label: '대시보드', component: Dashboard },
-    { path: '/odor-map', icon: <MdMap />, label: '악취지도', component: OdorMap },
-    { path: '/monitoring', icon: <MdNotifications />, label: '실시간 모니터링', component: RealTimeMonitoring },
-    { path: '/complaints', icon: <MdWarning />, label: '민원관리', component: ComplaintManagement },
-    { path: '/facilities', icon: <MdBuild />, label: '시설관리', component: FacilityManagement },
-    { path: '/statistics', icon: <MdAssessment />, label: '통계분석', component: Statistics },
-    { path: '/settings', icon: <MdSettings />, label: '설정', component: Settings }
-  ];
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -56,13 +71,7 @@ const App = () => {
             </div>
           </nav>
 
-          <main className="flex-1 p-6 overflow-hidden">
-            <Routes>
-              {menuItems.map((item) => (
-                <Route key={item.path} path={item.path} element={<item.component />} />
-              ))}
-            </Routes>
-          </main>
+          <MainContent />
         </div>
       </div>
     </Router>
