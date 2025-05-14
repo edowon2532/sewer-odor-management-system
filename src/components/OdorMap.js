@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import { FiSettings, FiLayers } from 'react-icons/fi';
 
 ChartJS.register(
   RadialLinearScale,
@@ -237,9 +238,9 @@ const OdorMap = () => {
   const [showPipeModal, setShowPipeModal] = useState(false);
   const [showOdor, setShowOdor] = useState(true);
   const [showPipe, setShowPipe] = useState(false);
-  const [showWeather, setShowWeather] = useState(true);
+  const [showWeather, setShowWeather] = useState(false); // 기본 off
   const [showComplaints, setShowComplaints] = useState(false);
-  const [showOdorList, setShowOdorList] = useState(true);
+  const [showOdorList, setShowOdorList] = useState(false); // 기본 off
   const [showComplaintLayer, setShowComplaintLayer] = useState(false);
   const [showComplaintCircle, setShowComplaintCircle] = useState(true);
   const [windData, setWindData] = useState(null);
@@ -251,6 +252,10 @@ const OdorMap = () => {
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkError, setBulkError] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
+  const [showLayerControl, setShowLayerControl] = useState(false); // 레이어 관리 모달 상태
+  const [showTabMenu, setShowTabMenu] = useState(false); // 지도유형 선택 모달 상태
+  // 상태 추가
+  const [areaDetailPage, setAreaDetailPage] = useState(0);
 
   // 기존 customOdorLocations 및 단일 등록 기능 제거
   const allOdorLocations = odorLocations;
@@ -382,6 +387,7 @@ const OdorMap = () => {
 
   const handleLocationClick = (location) => {
     setSelectedLocation(location);
+    console.log('선택된 위치:', location); // 이 로그가 뜨는지 확인
     setShowComplaints(false);
     setMapCenter(location.position);
     if (mapRef.current) {
@@ -622,18 +628,12 @@ const OdorMap = () => {
         <div className="flex justify-between items-start mb-2">
           <div className="flex items-center w-full justify-between">
             <h3 className="text-lg font-semibold">{getDisplayName(location)}</h3>
-            <button className="ml-2 px-3 py-1 bg-blue-600 text-white rounded text-xs font-semibold hover:bg-blue-700 flex items-center">
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" />
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700 ml-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
-              소비전력 관리
             </button>
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 ml-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
         </div>
         <div className="space-y-2">
           <div className="flex items-center">
@@ -655,6 +655,14 @@ const OdorMap = () => {
           <div className="flex items-center">
             <span className="text-sm font-medium mr-2">습도:</span>
             <span className="text-sm">{location.humidity}%</span>
+          </div>
+          <div className="flex justify-end mt-2">
+            <button className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-semibold hover:bg-blue-700 flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" />
+              </svg>
+              소비전력 관리
+            </button>
           </div>
         </div>
       </div>
@@ -714,23 +722,17 @@ const OdorMap = () => {
       return (
         <div className="absolute inset-0">
           {/* 레이어 콘트롤 */}
-          <div className="absolute left-4 top-24 bg-white rounded shadow p-2 z-40 min-w-[180px]">
+          <div className="absolute left-4 top-24 bg-white rounded shadow p-2 z-40 min-w-[180px] hidden md:block">
             <div className="font-bold text-base mb-2 flex items-center justify-between">
               <span>레이어 관리</span>
               <button className="ml-2 px-2 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded font-semibold" title="설정">설정</button>
             </div>
             <button className="w-full mb-2 px-2 py-1 bg-blue-500 text-white rounded text-sm font-semibold hover:bg-blue-600" onClick={() => setShowAddModal(true)}>지점 추가</button>
-            <label className="block">
-              <input type="checkbox" checked={showOdor} onChange={e => setShowOdor(e.target.checked)} /> 악취측정지점
-            </label>
+            <label className="block"><input type="checkbox" checked={showOdor} onChange={e => setShowOdor(e.target.checked)} /> 악취측정지점</label>
             {showOdor && (
               <div className="ml-6 mt-1 space-y-1 text-sm">
-                <label className="block">
-                  <input type="checkbox" checked={showFacilityPin} onChange={e => setShowFacilityPin(e.target.checked)} /> 측정시설
-                </label>
-                <label className="block">
-                  <input type="checkbox" checked={showFacilityInfo} onChange={e => setShowFacilityInfo(e.target.checked)} /> 측정정보
-                </label>
+                <label className="block"><input type="checkbox" checked={showFacilityPin} onChange={e => setShowFacilityPin(e.target.checked)} /> 측정시설</label>
+                <label className="block"><input type="checkbox" checked={showFacilityInfo} onChange={e => setShowFacilityInfo(e.target.checked)} /> 측정정보</label>
               </div>
             )}
             <label className="block"><input type="checkbox" checked={showOdorList} onChange={e => setShowOdorList(e.target.checked)} /> 악취 발생 현황</label>
@@ -1016,13 +1018,48 @@ const OdorMap = () => {
           )}
           {/* 악취지점 상세 정보 및 그래프 */}
           {selectedLocation && (
-            <div className={`fixed right-4 bottom-4 bg-white rounded shadow p-4 ${selectedLocation.type === '구역형' ? 'w-[800px]' : 'w-96'}`} style={{right: '1rem', zIndex: 99999}}>
+            <div
+              className={`fixed bg-white rounded shadow p-4 ${selectedLocation.type === '구역형' ? 'w-[800px]' : 'w-96'}`}
+              style={isMobile ? {
+                left: '50%',
+                right: 'auto',
+                bottom: '1rem',
+                top: 'auto',
+                transform: 'translateX(-50%)',
+                zIndex: 99999,
+                position: 'fixed',
+                maxWidth: '95vw',
+                width: selectedLocation.type === '구역형' ? '95vw' : '90vw',
+                minWidth: 0
+              } : {
+                right: '1rem',
+                bottom: '1rem', // ← 이 줄을 추가!
+                zIndex: 99999,
+                position: 'fixed'
+              }}
+            >
               {/* 우측 상단 닫기 버튼 */}
               <button onClick={() => setSelectedLocation(null)} className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 z-10">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
+              {/* 지점형 저감시설 뱃지: X 아이콘 바로 아래에 하나만 표시 */}
+                    {selectedLocation.type === '지점형' && (() => {
+                      const idx = odorLocations.findIndex(loc => loc.id === selectedLocation.id);
+                      let isErrorTarget = false;
+                      if (idx === 0) isErrorTarget = true;
+                      const facilityStatus = getFacilityStatusByIndex(idx, isErrorTarget, selectedLocation.grade);
+                      const textColor = facilityStatus.text === '가동' ? 'text-black' : 'text-white';
+                      return (
+                  <span className={`absolute right-6 top-12 px-3 py-1 rounded text-xs font-semibold flex items-center ${facilityStatus.color} ${textColor} z-10`}>
+                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" />
+                          </svg>
+                          {facilityStatus.text}
+                  </span>
+                      );
+                    })()}
               <div className={`${selectedLocation.type === '구역형' ? 'grid grid-cols-2 gap-6' : ''}`}>
                 {/* 왼쪽 구역: 기본 정보 */}
                 <div>
@@ -1033,28 +1070,13 @@ const OdorMap = () => {
                         {selectedLocation.name}
                       </span>
                     </div>
-                    {/* 시설관리 버튼: 저감시설 상태에 따라 색상과 텍스트 변경 */}
-                    {selectedLocation.type === '지점형' && (() => {
-                      const idx = odorLocations.findIndex(loc => loc.id === selectedLocation.id);
-                      let isErrorTarget = false;
-                      if (idx === 0) isErrorTarget = true;
-                      const facilityStatus = getFacilityStatusByIndex(idx, isErrorTarget, selectedLocation.grade);
-                      // 텍스트/아이콘 색상: 가동(연두색)일 때만 text-black, 그 외는 text-white
-                      const textColor = facilityStatus.text === '가동' ? 'text-black' : 'text-white';
-                      return (
-                        <button className={`ml-2 px-3 py-1 rounded text-xs font-semibold flex items-center ${facilityStatus.color} ${textColor}`}>
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" />
-                          </svg>
-                          {facilityStatus.text}
-                        </button>
-                      );
-                    })()}
+                    {/* 시설관리 버튼(저감시설 상태 뱃지) 삭제 */}
                   </div>
                   <div className="mb-2 flex items-center">
                     <span className="font-bold text-xl mr-2">등급:</span>
                     <span className="font-bold text-2xl" style={{ color: getLabelColor(selectedLocation.grade) }}>{selectedLocation.grade}</span>
                   </div>
+                  {/* 시설상태 뱃지: 등급 아래 줄에 별도 표시 부분 삭제 */}
                   <div className="mb-2 flex items-center">
                     <span className="font-bold text-xl mr-2">황화수소(H₂S):</span>
                     <span className="font-bold text-2xl">{selectedLocation.h2s} ppm</span>
@@ -1136,7 +1158,21 @@ const OdorMap = () => {
           </div>
           )}
           {/* 등급 기준 + 저감시설 동작 범례 2열 모달 */}
-          <div className="absolute bottom-4 right-[1rem] bg-white p-4 rounded shadow text-sm z-20 w-96 flex flex-row gap-8">
+          <div
+            className="absolute bottom-4 right-[1rem] bg-white p-4 rounded shadow text-sm z-20 w-96 flex flex-row gap-8"
+            style={isMobile ? {
+              left: '50%',
+              right: 'auto',
+              bottom: '1rem',
+              top: 'auto',
+              transform: 'translateX(-50%)',
+              width: '90vw',
+              minWidth: 0,
+              maxWidth: '95vw',
+              position: 'fixed',
+              zIndex: 20
+            } : { right: '1rem', bottom: '1rem', position: 'absolute', zIndex: 20 }}
+          >
             {/* 왼쪽 열: 악취 등급 */}
             <div className="flex-[1.1]">
               <h3 className="text-sm font-semibold mb-2">악취 등급(H₂S, ppm)</h3>
@@ -1455,6 +1491,31 @@ const OdorMap = () => {
     }
   }, [showOdor]);
 
+  // 지도유형/레이어/설정 버튼 (모바일 우측 상단)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+  // PC 환경에서만 기상정보, 악취 발생현황 모달을 기본적으로 보이게 설정
+  useEffect(() => {
+    if (!isMobile) {
+      setShowWeather(true);
+      setShowOdorList(true);
+    } else {
+      setShowWeather(false);
+      setShowOdorList(false);
+    }
+  }, [isMobile]);
+
+  // 시설관리(시설 지도) 탭 진입 시 첫 번째 시설 자동 선택
+  useEffect(() => {
+    if (selectedTab === '시설 지도' && pipeLocations.length > 0) {
+      setSelectedPipeInfo(pipeInfoExample);
+      setMapCenter(pipeLocations[0].position);
+      if (mapRef.current) {
+        mapRef.current.setLevel(3);
+      }
+    }
+  }, [selectedTab]);
+
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center h-[600px]">
@@ -1483,8 +1544,72 @@ const OdorMap = () => {
             </button>
           </div>
         </div>
-        {/* 지도유형 메뉴바 */}
-        <div className="pointer-events-auto">
+        {/* 모바일 우측 상단 버튼 */}
+        <div className="absolute top-4 right-4 z-50 flex space-x-2 md:hidden pointer-events-auto">
+          <button onClick={() => setShowTabMenu(true)} className="bg-white rounded-full p-2 shadow hover:bg-gray-100">
+            <FiSettings className="w-6 h-6 text-gray-700" />
+          </button>
+          <button onClick={() => setShowLayerControl(!showLayerControl)} className="bg-white rounded-full p-2 shadow hover:bg-gray-100">
+            <FiLayers className="w-6 h-6 text-gray-700" />
+          </button>
+        </div>
+        {/* 지도유형 선택 모달 (모바일) */}
+        {showTabMenu && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-30 pointer-events-auto" onClick={() => setShowTabMenu(false)}>
+            <div className="bg-white rounded-lg shadow-lg p-6 w-72 relative" onClick={e => e.stopPropagation()}>
+              <button onClick={() => setShowTabMenu(false)} className="absolute top-2 right-2 text-gray-400 hover:text-gray-700">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <div className="font-bold text-lg mb-4">지도 유형 선택</div>
+              {['악취 등급 지도', '시설 지도', '분석 지도'].map(tab => (
+                <button
+                  key={tab}
+                  className={`w-full mb-2 px-4 py-2 rounded text-base font-semibold ${selectedTab === tab ? 'bg-teal-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-teal-100'}`}
+                  onClick={() => { setSelectedTab(tab); setShowTabMenu(false); }}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        {/* 레이어 관리 모달 (모바일/PC) */}
+        {showLayerControl && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-30 pointer-events-auto" onClick={() => setShowLayerControl(false)}>
+            <div className="bg-white rounded-lg shadow-lg p-6 w-80" onClick={e => e.stopPropagation()}>
+              <div className="font-bold text-lg mb-4 flex items-center justify-between">
+                <span>레이어 관리</span>
+                <button onClick={() => setShowLayerControl(false)} className="text-gray-400 hover:text-gray-700"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+              </div>
+              {/* 기존 레이어 관리 내용 복사 */}
+              <button className="w-full mb-2 px-2 py-1 bg-blue-500 text-white rounded text-sm font-semibold hover:bg-blue-600" onClick={() => setShowAddModal(true)}>지점 추가</button>
+              <label className="block"><input type="checkbox" checked={showOdor} onChange={e => setShowOdor(e.target.checked)} /> 악취측정지점</label>
+              {showOdor && (
+                <div className="ml-6 mt-1 space-y-1 text-sm">
+                  <label className="block"><input type="checkbox" checked={showFacilityPin} onChange={e => setShowFacilityPin(e.target.checked)} /> 측정시설</label>
+                  <label className="block"><input type="checkbox" checked={showFacilityInfo} onChange={e => setShowFacilityInfo(e.target.checked)} /> 측정정보</label>
+                </div>
+              )}
+              <label className="block"><input type="checkbox" checked={showOdorList} onChange={e => setShowOdorList(e.target.checked)} /> 악취 발생 현황</label>
+              <label className="block"><input type="checkbox" checked={showComplaintLayer} onChange={e => setShowComplaintLayer(e.target.checked)} /> 민원발생지점</label>
+              <label className="block"><input type="checkbox" checked={showComplaintCircle} onChange={e => setShowComplaintCircle(e.target.checked)} /> 악취영향권</label>
+              <div className="mt-1">
+                <label className="block font-semibold"><input type="checkbox" checked={showPipe} onChange={e => setShowPipe(e.target.checked)} /> 하수시설</label>
+                <div className="ml-6 mt-1 space-y-1 text-sm">
+                  <label className="block"><input type="checkbox" disabled /> 하수관거</label>
+                  <label className="block"><input type="checkbox" disabled /> 맨홀</label>
+                  <label className="block"><input type="checkbox" disabled /> 빗물받이</label>
+                  <label className="block"><input type="checkbox" disabled /> 도로면</label>
+                </div>
+              </div>
+              <label className="block mt-1"><input type="checkbox" checked={showWeather} onChange={e => setShowWeather(e.target.checked)} /> 기상정보</label>
+            </div>
+          </div>
+        )}
+        {/* 기존 지도유형 메뉴바는 md 이상에서만 노출 */}
+        <div className="pointer-events-auto hidden md:block">
           <div className="bg-white/90 rounded-full px-4 py-2 space-x-2 flex absolute left-1/2 -translate-x-1/2 top-4 z-50 shadow-md shadow-gray-300/40">
             {tabMenu.map((tab) => (
               <button
@@ -1567,6 +1692,120 @@ const OdorMap = () => {
         )}
       </div>
         {renderTabContent()}
+        {selectedLocation && isMobile && selectedLocation.type === '구역형' && (
+          <div
+            className="fixed bg-white rounded shadow p-4"
+            style={{
+              left: '50%',
+              bottom: '1rem',
+              transform: 'translateX(-50%)',
+              zIndex: 99999,
+              position: 'fixed',
+              maxWidth: '95vw',
+              width: '95vw',
+              minWidth: 0
+            }}
+          >
+            {/* 캐로셀 컨트롤 */}
+            <div className="flex justify-between items-center mb-2">
+              <button
+                className="text-2xl px-2"
+                onClick={() => setAreaDetailPage(p => Math.max(0, p - 1))}
+                disabled={areaDetailPage === 0}
+              >〈</button>
+              <span className="text-sm text-gray-500">{areaDetailPage + 1} / 2</span>
+              <button
+                className="text-2xl px-2"
+                onClick={() => setAreaDetailPage(p => Math.min(1, p + 1))}
+                disabled={areaDetailPage === 1}
+              >〉</button>
+            </div>
+            {/* 캐로셀 페이지 */}
+            {areaDetailPage === 0 ? (
+              // 왼쪽: 황화수소 등급/기본정보
+              <div>
+                <div className="mb-2 flex items-center">
+                  <span className="font-bold text-xl mr-2">등급:</span>
+                  <span className="font-bold text-2xl" style={{ color: getLabelColor(selectedLocation.grade) }}>{selectedLocation.grade}</span>
+                </div>
+                <div className="mb-2 flex items-center">
+                  <span className="font-bold text-xl mr-2">황화수소(H₂S):</span>
+                  <span className="font-bold text-2xl">{selectedLocation.h2s} ppm</span>
+                </div>
+                <div className="mb-2">온도: {selectedLocation.temp} ℃</div>
+                <div className="mb-2">습도: {selectedLocation.humidity} %</div>
+                <div className="mb-2">실시간 추이</div>
+                <Line
+                  data={{
+                    labels: selectedLocation.labels,
+                    datasets: [
+                      {
+                        label: '악취강도',
+                        data: selectedLocation.timeSeries,
+                        borderColor: getLabelColor(selectedLocation.grade),
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        fill: true,
+                      }
+                    ]
+                  }}
+                  options={{
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                  }}
+                  height={120}
+                />
+              </div>
+            ) : (
+              // 오른쪽: 바람장 분석
+              <div>
+                <div className="mb-2 font-bold text-lg">바람장 분석</div>
+                <div className="mb-2 text-sm text-gray-600">
+                  <div className="mb-1">풍향: {windData.directionKor} / 풍속: {windData.baseSpeed} m/s</div>
+                  <div>기압: {windData.pressure} hPa</div>
+                </div>
+                <div className="w-4/5 mx-auto">
+                  <Radar
+                    data={{
+                      labels: windData.labelsKor,
+                      datasets: [
+                        {
+                          label: '풍속 (m/s)',
+                          data: windData.data,
+                          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                          borderColor: 'rgba(54, 162, 235, 1)',
+                          borderWidth: 2,
+                          pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                          pointBorderColor: '#fff',
+                          pointHoverBackgroundColor: '#fff',
+                          pointHoverBorderColor: 'rgba(54, 162, 235, 1)'
+                        }
+                      ]
+                    }}
+                    options={{
+                      responsive: true,
+                      scales: {
+                        r: {
+                          beginAtZero: true,
+                          max: 4,
+                          ticks: {
+                            stepSize: 1
+                          }
+                        }
+                      },
+                      plugins: {
+                        legend: {
+                          display: false
+                        }
+                      }
+                    }}
+                    height={200}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
     </div>
   );
 };

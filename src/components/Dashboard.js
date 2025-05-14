@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Line, Bar, Radar } from 'react-chartjs-2';
 import { FiMoreHorizontal, FiSettings } from 'react-icons/fi';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
@@ -168,6 +168,99 @@ const civilComplaintByHourData = {
   ],
 };
 
+// 풍향/풍속 캐로셀 컴포넌트
+const WindCarousel = ({ windRadarData, windRadarOptions }) => {
+  const [slide, setSlide] = useState(0);
+  const [arrowInfo, setArrowInfo] = useState({
+    windDirIdx: Math.floor(Math.random() * 16),
+    windSpeed: Math.floor(Math.random() * 10) + 1 // 1~10 m/s
+  });
+  const directions = ['북', '북북동', '북동', '동북동', '동', '동남동', '남동', '남남동', '남', '남남서', '남서', '서남서', '서', '서북서', '북서', '북북서'];
+  const windDir = arrowInfo.windDirIdx * 22.5;
+
+  // 2번 슬라이드 진입 시마다 랜덤값 갱신
+  useEffect(() => {
+    if (slide === 1) {
+      setArrowInfo({
+        windDirIdx: Math.floor(Math.random() * 16),
+        windSpeed: Math.floor(Math.random() * 10) + 1
+      });
+    }
+  }, [slide]);
+
+  // 데이터 없는 레이더 차트 옵션(눈금만, 80% 크기)
+  const radarBgOptions = {
+    ...windRadarOptions,
+    plugins: { ...windRadarOptions.plugins, legend: { display: false } },
+    scales: {
+      r: {
+        ...windRadarOptions.scales.r,
+        pointLabels: { color: '#e5e7eb', font: { size: 16 } },
+        grid: { color: 'rgba(229,231,235,0.2)' },
+        angleLines: { color: '#e5e7eb', display: true },
+        ticks: { color: '#e5e7eb', display: false, stepSize: 2 },
+        min: 0,
+        max: 12
+      }
+    }
+  };
+  const radarBgData = {
+    labels: windRadarData.labels,
+    datasets: []
+  };
+
+  // 2번 슬라이드: 눈금만 있는 레이더 차트(80%) + 화살표 + 하단 텍스트
+  const ArrowChart = () => (
+    <div className="relative flex flex-col items-center justify-center h-full w-full">
+      <div className="absolute inset-0 z-0 opacity-80 pointer-events-none flex items-center justify-center">
+        <div style={{ width: '90%', height: '90%' }}>
+          <Radar data={radarBgData} options={radarBgOptions} className="h-full w-full" />
+        </div>
+      </div>
+      <div className="relative z-10 flex flex-col items-center justify-center h-full w-full">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <g transform={`rotate(${windDir},90,90)`}>
+            <line x1="90" y1="90" x2="90" y2="30" stroke="#38bdf8" strokeWidth="8" strokeLinecap="round" />
+            <polygon points="90,18 82,38 98,38" fill="#38bdf8" />
+          </g>
+        </svg>
+      </div>
+      <div className="absolute bottom-2 left-4 text-sky-400 font-bold text-base">풍속 {arrowInfo.windSpeed} m/s</div>
+      <div className="absolute bottom-2 right-4 text-sky-400 font-bold text-base">풍향 {directions[arrowInfo.windDirIdx]}</div>
+    </div>
+  );
+
+  return (
+    <div className="relative h-full w-full flex flex-col items-center justify-center">
+      <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
+        <button
+          onClick={() => setSlide(s => (s === 0 ? 1 : 0))}
+          className="rounded-full p-1 shadow text-gray-500"
+          style={{ opacity: 0.7 }}
+        >〈</button>
+      </div>
+      <div className="absolute right-2 top-1/2 -translate-y-1/2 z-20">
+        <button
+          onClick={() => setSlide(s => (s === 0 ? 1 : 0))}
+          className="rounded-full p-1 shadow text-gray-500"
+          style={{ opacity: 0.7 }}
+        >〉</button>
+      </div>
+      <div className="w-full h-full flex items-center justify-center">
+        {slide === 0 ? (
+          <Radar data={windRadarData} options={windRadarOptions} className="h-full w-full" />
+        ) : (
+          <ArrowChart />
+        )}
+      </div>
+      <div className="flex justify-center gap-2 mt-2">
+        <span className={`w-2 h-2 rounded-full ${slide === 0 ? 'bg-blue-500' : 'bg-gray-300'}`}></span>
+        <span className={`w-2 h-2 rounded-full ${slide === 1 ? 'bg-blue-500' : 'bg-gray-300'}`}></span>
+      </div>
+    </div>
+  );
+};
+
 const Dashboard = () => {
   // 측정소별 H₂S 데이터 ('보통', '나쁨' 구간만 랜덤 분포)
   const randomStationData = useMemo(() => {
@@ -222,44 +315,46 @@ const Dashboard = () => {
   };
 
   // 민원접수 현황 구분 상태
-  const [complaintViewType, setComplaintViewType] = useState('지역별');
+  const [complaintViewType, setComplaintViewType] = useState('시간대별');
 
   return (
-    <div className="h-full w-full p-2 md:p-3 lg:p-4 box-border overflow-hidden bg-[#4B5563]">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-3 lg:gap-4 h-full">
+    <div className="h-full w-full p-2 md:p-3 lg:p-4 box-border overflow-y-auto bg-[#4B5563]">
+      <div
+        className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-3 lg:gap-4 h-[98.2%]"
+      >
         {/* 좌측 카드 */}
-        <div className="md:col-span-3 flex flex-col gap-y-2 md:gap-y-3 lg:gap-y-4 w-full h-full min-h-0 overflow-auto">
-          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-[1.5_1_0%] min-h-0 flex flex-col min-h-[220px]">
+        <div className="md:col-span-3 flex flex-col gap-y-2 md:gap-y-3 lg:gap-y-4 w-full md:h-full min-h-0">
+          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-[1.5_1_0%] min-h-[60vw] md:min-h-[220px] aspect-[4/3] md:aspect-auto flex flex-col">
             <div className="flex justify-between items-center mb-2">
               <span className="font-bold text-gray-100">하수악취(H₂S)</span>
               <FiMoreHorizontal className="text-gray-200" />
             </div>
             <div className="flex-1 min-h-0">
-              <Line data={h2sData} options={chartOptions} className="h-full" />
+              <Line data={h2sData} options={chartOptions} className="h-full w-full" />
             </div>
           </div>
-          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-[1.5_1_0%] min-h-0 flex flex-col min-h-[220px]">
+          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-[1.5_1_0%] min-h-[60vw] md:min-h-[220px] aspect-[4/3] md:aspect-auto flex flex-col">
             <div className="flex justify-between items-center mb-2">
               <span className="font-bold text-gray-100">기온</span>
               <FiMoreHorizontal className="text-gray-200" />
             </div>
             <div className="flex-1 min-h-0">
-              <Line data={tempData} options={chartOptions} className="h-full" />
+              <Line data={tempData} options={chartOptions} className="h-full w-full" />
             </div>
           </div>
-          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-[2_1_0%] min-h-0 flex flex-col min-h-[220px]">
+          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-[2_1_0%] min-h-[60vw] md:min-h-[220px] aspect-[4/3] md:aspect-auto flex flex-col">
             <div className="flex justify-between items-center mb-2">
-              <span className="font-bold text-gray-100">바람장</span>
+              <span className="font-bold text-gray-100">풍향/풍속</span>
               <FiMoreHorizontal className="text-gray-200" />
             </div>
             <div className="flex-1 min-h-0">
-              <Radar data={windRadarData} options={windRadarOptions} className="h-full" />
+              <WindCarousel windRadarData={windRadarData} windRadarOptions={windRadarOptions} />
             </div>
           </div>
         </div>
         {/* 중앙 지도 */}
-        <div className="md:col-span-6 flex flex-col gap-y-2 md:gap-y-3 lg:gap-y-4 w-full h-full overflow-auto">
-          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 flex-[3_1_0%] flex flex-col relative w-full min-h-0 min-h-[400px]">
+        <div className="md:col-span-6 flex flex-col gap-y-2 md:gap-y-3 lg:gap-y-4 w-full md:h-full">
+          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 flex-[3_1_0%] flex flex-col relative w-full min-h-[60vw] md:min-h-[300px] aspect-[4/3] md:aspect-auto">
             <div className="flex justify-between items-center mb-2">
               <span className="font-bold text-white/90">현장상황판 - 광주광역시 남구</span>
               <FiSettings className="text-gray-400" />
@@ -275,19 +370,19 @@ const Dashboard = () => {
               </Map>
             </div>
           </div>
-          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 flex-1 min-h-0 flex flex-col">
+          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 flex-1 min-h-[60vw] md:min-h-0 flex flex-col aspect-[4/3] md:aspect-auto">
             <div className="flex justify-between items-center mb-2">
               <span className="font-bold text-gray-100">측정소별 H₂S</span>
               <FiMoreHorizontal className="text-gray-200" />
             </div>
             <div className="flex-1 min-h-0">
-              <Bar data={stationBarData} options={chartOptions} className="h-full" />
+              <Bar data={stationBarData} options={chartOptions} className="h-full w-full" />
             </div>
           </div>
         </div>
         {/* 우측 카드 */}
-        <div className="md:col-span-3 flex flex-col gap-y-2 md:gap-y-3 lg:gap-y-4 w-full h-full overflow-auto">
-          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-1 min-h-0 flex flex-col">
+        <div className="md:col-span-3 flex flex-col gap-y-2 md:gap-y-3 lg:gap-y-4 w-full md:h-full">
+          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-1 min-h-[60vw] md:min-h-0 flex flex-col aspect-[4/3] md:aspect-auto">
             <div className="flex justify-between items-center mb-2">
               <span className="font-bold text-gray-100">민원접수 현황</span>
               <div className="flex items-center gap-2">
@@ -304,28 +399,28 @@ const Dashboard = () => {
             </div>
             <div className="flex-1 min-h-0">
               {complaintViewType === '지역별' ? (
-                <Bar data={civilComplaintData} options={chartOptions} className="h-full" />
+                <Bar data={civilComplaintData} options={chartOptions} className="h-full w-full" />
               ) : (
-                <Line data={civilComplaintByHourData} options={chartOptions} className="h-full" />
+                <Line data={civilComplaintByHourData} options={chartOptions} className="h-full w-full" />
               )}
             </div>
             <div className="flex justify-end mt-2">
               <span className="bg-gray-700 text-white px-2 py-1 rounded text-xs">민원접수 건수</span>
             </div>
           </div>
-          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-1 min-h-0 flex flex-col">
+          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-1 min-h-[60vw] md:min-h-0 flex flex-col aspect-[4/3] md:aspect-auto">
             <div className="flex justify-between items-center mb-2">
               <span className="font-bold text-gray-100">저감시설 작동현황</span>
               <FiMoreHorizontal className="text-gray-200" />
             </div>
             <div className="flex-1 min-h-0">
-              <Bar data={sensorBarData} options={chartOptions} className="h-full" />
+              <Bar data={sensorBarData} options={chartOptions} className="h-full w-full" />
             </div>
             <div className="flex justify-end mt-2">
               <span className="bg-gray-700 text-white px-2 py-1 rounded text-xs">작동 시간(분)</span>
             </div>
           </div>
-          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-1 min-h-0 flex flex-col">
+          <div className="rounded-2xl bg-[#2C3440] shadow-xl p-4 relative w-full flex-1 min-h-[60vw] md:min-h-0 flex flex-col aspect-[4/3] md:aspect-auto">
             <div className="flex justify-between items-center mb-2">
               <span className="font-bold text-gray-100">시설/장치 원격 제어</span>
               <FiSettings className="text-gray-200" />

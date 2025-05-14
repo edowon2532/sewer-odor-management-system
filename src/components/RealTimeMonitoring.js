@@ -196,6 +196,9 @@ const RealTimeMonitoring = () => {
     saveAs(new Blob([wbout], { type: 'application/octet-stream' }), '악취저감시설_실시간가동제어.xlsx');
   };
 
+  // 모바일 환경 감지
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <div className="flex flex-col min-h-screen">
       <h2 className="text-xl font-bold mb-4">실시간 악취 모니터링</h2>
@@ -235,8 +238,8 @@ const RealTimeMonitoring = () => {
               <tr>
                 <th className="p-2 text-left">지역</th>
                 <th className="p-2 text-left">평균 황화수소 농도(ppm)</th>
-                <th className="p-2 text-left">평균 온도(℃)</th>
-                <th className="p-2 text-left">평균 습도(%)</th>
+                {!isMobile && <th className="p-2 text-left">평균 온도(℃)</th>}
+                {!isMobile && <th className="p-2 text-left">평균 습도(%)</th>}
                 <th className="p-2 text-left">상태</th>
               </tr>
             </thead>
@@ -245,8 +248,8 @@ const RealTimeMonitoring = () => {
                 <tr key={region.name} className={idx !== pagedRegions.length - 1 ? 'border-b' : ''}>
                   <td className="p-2">{region.name}</td>
                   <td className="p-2">{region.value} ppm</td>
-                  <td className="p-2">{region.temp} ℃</td>
-                  <td className="p-2">{region.humidity} %</td>
+                  {!isMobile && <td className="p-2">{region.temp} ℃</td>}
+                  {!isMobile && <td className="p-2">{region.humidity} %</td>}
                   <td className="p-2">
                     {region.status === '매우 좋음' && <span className="bg-[#2563eb] text-white px-2 py-1 rounded text-sm">매우 좋음</span>}
                     {region.status === '좋음' && <span className="bg-[#8BC34A] text-white px-2 py-1 rounded text-sm">좋음</span>}
